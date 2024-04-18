@@ -1,0 +1,43 @@
+{
+  "name": "ohno",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --mode client && vite build",
+    "preview": "wrangler pages dev ./dist",
+    "deploy": "$npm_execpath run build && wrangler pages deploy ./dist"
+  },
+  "private": true,
+  "dependencies": {
+    "@hono/react-renderer": "^0.2.0",
+    "@hono/zod-validator": "^0.2.1",
+    "@radix-ui/react-avatar": "^1.0.4",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-slot": "^1.0.2",
+    "ai": "^3.0.23",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
+    "hono": "^4.2.4",
+    "honox": "^0.1.15",
+    "lucide-react": "^0.368.0",
+    "openai": "^4.37.1",
+    "react": "^18.2.0",
+    "react-day-picker": "^8.10.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
+    "@hono/vite-cloudflare-pages": "^0.2.4",
+    "@types/react": "^18.2.67",
+    "@types/react-dom": "^18.2.22",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.0.12",
+    "wrangler": "^3.32.0"
+  }
+}
