@@ -16,6 +16,45 @@ export default reactRenderer(({ children, title }) => {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/ico" href="/static/assets/favicon.ico" />
+        <title>
+          {title || "Chatbot Template | Hono.js | Snowflake Cortex LLM"}
+        </title>
+        <meta
+          name="description"
+          content="A chatbot template built with Hono.js on Cloudflare Pages, powered by Snowflake Cortex LLM model and styled with Tailwind CSS. Utilizes Mistral models for enhanced conversational capabilities."
+        />
+        <meta
+          name="keywords"
+          content="chatbot, template, Hono.js, Cloudflare Pages, Snowflake Cortex, LLM, Tailwind CSS, Mistral models, React, Vite"
+        />
+        <meta name="author" content="Kaarthik Andavar" />
+        <meta
+          property="og:title"
+          content={title || "Chatbot Template | Hono.js | Snowflake Cortex LLM"}
+        />
+        <meta
+          property="og:description"
+          content="A chatbot template built with Hono.js on Cloudflare Pages, powered by Snowflake Cortex LLM model and styled with Tailwind CSS. Utilizes Mistral models for enhanced conversational capabilities."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://ohno-1sq.pages.dev" />
+        <meta
+          property="og:image"
+          content="https://ohno-1sq.pages.dev/static/assets/og-image.jpg"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={title || "Chatbot Template | Hono.js | Snowflake Cortex LLM"}
+        />
+        <meta
+          name="twitter:description"
+          content="A chatbot template built with Hono.js on Cloudflare Pages, powered by Snowflake Cortex LLM model and styled with Tailwind CSS. Utilizes Mistral models for enhanced conversational capabilities."
+        />
+        <meta
+          name="twitter:image"
+          content="https://ohno-1sq.pages.dev/static/assets/twitter-image.jpg"
+        />
 
         {import.meta.env.PROD ? (
           <>

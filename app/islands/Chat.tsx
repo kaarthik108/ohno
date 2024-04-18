@@ -90,23 +90,25 @@ export default function Chat() {
     setInput(e.target.value);
   }
 
-  const ref = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    if (ref.current === null) return;
-    ref.current.scrollTo(0, ref.current.scrollHeight);
+    scrollToBottom();
   }, [messages]);
-
   return (
     <>
-      <div className="px-8 md:px-12 pt-20 md:pt-16 pb-32 md:pb-40 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-6 overflow-y-auto">
+      <div className="px-8 md:px-12 pt-20 md:pt-16 pb-32 md:pb-40 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-6 overflow-y-auto ">
         {messages.map((m) => (
           <div key={m.id} className="">
             {m.role === "user" && <UserMessage content={m.content} />}
-
             {m.role === "assistant" && (
               <BotMessage content={m.content} className="antialiased" />
             )}
+            <div ref={messagesEndRef} />
           </div>
         ))}
         {isLoading && (
@@ -125,12 +127,12 @@ export default function Chat() {
             </div>
           </div>
         )}
-        <div className="fixed bottom-24 md:bottom-28 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-transparent w-full z-10 border-none space-y-2 pb-2">
+        <div className="fixed bottom-24 md:bottom-28 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-[#f1efe8] w-full z-10 border-none space-y-2 pb-2 pt-2">
           <div className="flex flex-col sm:flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 w-full max-w-2xl mb-2 md:mb-0">
             {helperMessages.map((message, index) => (
               <div
                 key={index}
-                className="flex-1 bg-transparent rounded-xl shadow-lg h-32 md:h-10 flex items-center text-nowrap justify-between px-3 py-2 md:py-0 cursor-pointer border border-gray-300 hover:border-black transition-colors duration-300"
+                className="flex-1 bg-transparent rounded-xl shadow-lg h-32 md:h-10 flex items-center text-nowrap justify-between px-3 py-4 md:py-0 cursor-pointer border border-gray-300 hover:border-black transition-colors duration-300"
                 onClick={() => handleHelperMessageClick(message)}
               >
                 <span className="text-black font-mono text-xs">{message}</span>

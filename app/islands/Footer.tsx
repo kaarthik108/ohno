@@ -2,7 +2,7 @@ import { IconSnowflake } from "./Header";
 
 export default function Footer() {
   return (
-    <div className="fixed w-full bottom-0 flex items-center justify-center">
+    <div className="fixed w-full bottom-0 flex items-center justify-center bg-[#f1efe8]">
       <div className="flex items-center gap-4">
         <a
           href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete?utm_source=ohno"

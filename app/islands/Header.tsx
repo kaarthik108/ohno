@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -69,7 +68,9 @@ export function IconSnowflake({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="#29b5e8"
-      className={cn("size-4", className)}
+      width="24"
+      height="24"
+      className={cn("size-1", className)}
       {...props}
     >
       <path d="M81.492 28.285l-.084-.1v.1zm-.084-1l.084-.088h-.084zm-8.548 3.887l-.03.075.045.114.047-.114-.033-.08h-.028zm9.56-2.897v-.1l-.084.1zm0-.98v-.088h-.084zm-11.957 7.52l.025.001.023-.057.01-.03-.043-.12-.048.12zm4.82 0l.024-.001.006-.015.026-.074-.05-.12-.042.12zm26.885-3.37l-.05-.063-.006.12zm-2.416 2.502V33.9l-.025.063zm1.628-1.813l-.006.006.055.068.06-.063-.005-.006zm-1.713.466h.026l.06-.06v-.123l-.085.086zm-18.175-4.325v-.1h-.084z" />
