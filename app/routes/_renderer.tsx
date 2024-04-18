@@ -36,6 +36,11 @@ export default reactRenderer(({ children, title }) => {
         <Header />
         {children}
         <Footer />
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "d3b155d6c9ba4dd384bb4e14a841dd64"}'
+        ></script>
       </body>
     </html>
   );
