@@ -1,7 +1,7 @@
 export async function executeSnowflakeQuery(sqlText: string) {
   const baseUrl =
     process.env.NODE_ENV === "production"
-      ? "https://chat-d2b.pages.dev"
+      ? "https://ohno-1sq.pages.dev"
       : "http://localhost:5173";
 
   const res = await fetch(`${baseUrl}/api/snow`, {

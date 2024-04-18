@@ -13,17 +13,13 @@ const schema = z.object({
 
 export const POST = createRoute(async (c) => {
   const { query } = await c.req.json();
+  const baseUrl = env<{ SNOWFLAKE_API_URL: string }>(c).SNOWFLAKE_API_URL; // cloudflare tunnel 😅
 
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://snowbrain-agui.vercel.app"
-      : "https://snowbrain-agui.vercel.app";
-
-  const res = await fetch(`${baseUrl}/api/snowai`, {
+  const res = await fetch(`${baseUrl}/api/snow`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": env<{ X_API_KEY: string }>(c).X_API_KEY,
+      // "x-api-key": env<{ X_API_KEY: string }>(c).X_API_KEY,
     },
     body: JSON.stringify({ query: query }),
   });
