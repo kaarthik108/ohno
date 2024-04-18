@@ -1,3 +1,4 @@
+import Footer from "@/islands/Footer";
 import { Header } from "@/islands/Header";
 import { reactRenderer, useRequestContext } from "@hono/react-renderer";
 import { FC, PropsWithChildren } from "react";
@@ -14,6 +15,8 @@ export default reactRenderer(({ children, title }) => {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/ico" href="/static/assets/favicon.ico" />
+
         {import.meta.env.PROD ? (
           <>
             <HasIslands>
@@ -32,6 +35,7 @@ export default reactRenderer(({ children, title }) => {
       <body>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

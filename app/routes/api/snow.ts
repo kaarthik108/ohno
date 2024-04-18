@@ -19,7 +19,7 @@ export const POST = createRoute(async (c) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // "x-api-key": env<{ X_API_KEY: string }>(c).X_API_KEY,
+      Authorization: "Bearer " + env<{ TOKEN: string }>(c).TOKEN,
     },
     body: JSON.stringify({ query: query }),
   });
