@@ -33,7 +33,14 @@ export default defineConfig(({ mode }) => {
     return {
       ...common,
       ssr: {
-        external: ["react", "react-dom", "openai", "ai"],
+        external: [
+          "react",
+          "react-dom",
+          "openai",
+          "ai",
+          "@upstash/ratelimit",
+          "@upstash/redis/cloudflare",
+        ],
       },
       plugins: [
         honox({
