@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { BotCard, BotMessage, UserMessage } from "@/components/message";
+import { BotMessage, UserMessage } from "@/components/message";
 import hono from "@/islands/hono.png";
 import { executeSnowflakeQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { CornerDownLeft, Loader2, MoveUpRight } from "lucide-react";
 export default function Chat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -81,6 +82,20 @@ export default function Chat() {
       ]);
     } catch (error) {
       console.error("Error executing query:", error);
+      if (
+        error instanceof Error &&
+        error.message.includes("You are rate limited")
+      ) {
+        setIsRateLimited(true);
+        setMessages([
+          ...newMessages,
+          {
+            id: String(newMessages.length + 1),
+            role: "assistant",
+            content: error.message,
+          },
+        ]);
+      }
     }
 
     setIsLoading(false);
@@ -133,7 +148,11 @@ export default function Chat() {
               <div
                 key={index}
                 className="flex-1 bg-transparent rounded-xl shadow-lg h-32 md:h-10 flex items-center text-nowrap justify-between px-3 py-4 md:py-0 cursor-pointer border border-gray-300 hover:border-black transition-colors duration-300"
-                onClick={() => handleHelperMessageClick(message)}
+                onClick={() => {
+                  if (!isRateLimited) {
+                    handleHelperMessageClick(message);
+                  }
+                }}
               >
                 <span className="text-black font-mono text-xs">{message}</span>
                 <MoveUpRight size={12} className="ml-2 text-black" />
@@ -156,14 +175,24 @@ export default function Chat() {
                 onChange={handleInputChange}
                 maxLength={150}
                 autoFocus
+                autoComplete="off"
+                disabled={isRateLimited}
                 placeholder="Ask a question..."
-                className="bg-transparent text-white dark:text-black placeholder:text-gray-400 ring-0 outline-none resize-none py-2.5 px-2 font-mono text-sm h-10 w-full transition-all duration-300"
+                className={cn(
+                  "bg-transparent text-white dark:text-black placeholder:text-gray-400 ring-0 outline-none resize-none py-2.5 px-2 font-mono text-sm h-10 w-full transition-all duration-300",
+                  {
+                    "cursor-not-allowed": isRateLimited,
+                  }
+                )}
               />
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isRateLimited}
                 className={cn(
-                  `text-white dark:text-black dark:bg-gray-100 rounded-lg hover:bg-white/25 focus:bg-white/25 w-8 h-8 aspect-square flex items-center justify-center ring-0 outline-0`
+                  `text-white dark:text-black dark:bg-gray-100 rounded-lg hover:bg-white/25 focus:bg-white/25 w-8 h-8 aspect-square flex items-center justify-center ring-0 outline-0`,
+                  {
+                    "cursor-not-allowed": isRateLimited,
+                  }
                 )}
               >
                 {isLoading ? (

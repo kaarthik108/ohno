@@ -13,7 +13,7 @@ const schema = z.object({
   ),
 });
 const cache = new Map();
-// x-real-ip
+
 export const POST = createRoute(async (c) => {
   const redis = new Redis({
     url: env<{ UPSTASH_REDIS_URL: string }>(c).UPSTASH_REDIS_URL,
@@ -28,13 +28,7 @@ export const POST = createRoute(async (c) => {
     ephemeralCache: cache,
   });
 
-  // ratelimit
-  if (new URL(c.req.url).pathname == "/favicon.ico") {
-    return new Response(null, { status: 400 });
-  }
-
   const userIP: string = c.req.header("cf-connecting-ip") || "none";
-  console.log("User IP:", userIP);
 
   const data = await ohnoRateLimit.limit(userIP);
 
@@ -65,17 +59,10 @@ export const POST = createRoute(async (c) => {
       },
     });
   } else {
-    // show an error page for rate limited users
     return new Response(
-      JSON.stringify(
-        {
-          message: "You are rate limited, try again later.",
-          ip: userIP,
-          data,
-        },
-        null,
-        2
-      ),
+      JSON.stringify({
+        query: "You are rate limited, try again later.",
+      }),
       { status: 200 }
     );
   }
