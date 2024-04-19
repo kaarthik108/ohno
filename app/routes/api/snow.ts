@@ -1,6 +1,5 @@
 import { MultiRegionRatelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis/cloudflare";
-import { env } from "hono/adapter";
 import { createRoute } from "honox/factory";
 import { z } from "zod";
 
@@ -16,13 +15,13 @@ const cache = new Map();
 
 export const POST = createRoute(async (c) => {
   const redis = new Redis({
-    url: env<{ UPSTASH_REDIS_URL: string }>(c).UPSTASH_REDIS_URL,
-    token: env<{ UPSTASH_REDIS_TOKEN: string }>(c).UPSTASH_REDIS_TOKEN,
+    url: c.env?.UPSTASH_REDIS_URL as string,
+    token: c.env?.UPSTASH_REDIS_TOKEN as string,
   });
 
   const ohnoRateLimit = new MultiRegionRatelimit({
     redis: [redis],
-    limiter: MultiRegionRatelimit.slidingWindow(3, "30 s"),
+    limiter: MultiRegionRatelimit.slidingWindow(10, "60 s"),
     analytics: true,
     prefix: "ratelimit:ohno",
     ephemeralCache: cache,
@@ -34,13 +33,14 @@ export const POST = createRoute(async (c) => {
 
   if (data.success) {
     const { query } = await c.req.json();
-    const baseUrl = env<{ SNOWFLAKE_API_URL: string }>(c).SNOWFLAKE_API_URL; // cloudflare tunnel 😅
+
+    const baseUrl = c.env?.SNOWFLAKE_API_URL; // cloudflare tunnel 😅
 
     const res = await fetch(`${baseUrl}/api/snow`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + env<{ TOKEN: string }>(c).TOKEN,
+        Authorization: "Bearer " + c.env?.TOKEN,
       },
       body: JSON.stringify({ query: query }),
     });

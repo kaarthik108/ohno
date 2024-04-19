@@ -1,4 +1,4 @@
-interface SnowflakeResponse {
+export interface SnowflakeResponse {
   choices: Array<{
     messages: string;
   }>;
@@ -10,7 +10,7 @@ interface SnowflakeResponse {
     total_tokens: number;
   };
 }
-interface RateLimitResponse {
+export interface RateLimitResponse {
   query: string;
 }
 
@@ -26,7 +26,6 @@ export async function executeSnowflakeQuery(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // "x-api-key": process.env.X_API_KEY as string,
     },
     body: JSON.stringify({ query: sqlText }),
   });
@@ -36,7 +35,6 @@ export async function executeSnowflakeQuery(
   }
 
   const data: unknown = await res.json();
-  console.log(data);
 
   if (
     typeof data === "object" &&
@@ -44,7 +42,6 @@ export async function executeSnowflakeQuery(
     (data as RateLimitResponse).hasOwnProperty("query")
   ) {
     const rateLimitMessage = (data as RateLimitResponse).query;
-    console.log(rateLimitMessage);
     throw new Error(rateLimitMessage);
   }
 
