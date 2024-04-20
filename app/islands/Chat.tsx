@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { BotMessage, UserMessage } from "@/components/message";
-import { executeSnowflakeQuery, fetchaiQuery } from "@/lib/snowflake";
+import { executeSnowflakeQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { CornerDownLeft, Loader2 } from "lucide-react";
@@ -9,6 +9,21 @@ import HelperMessage from "./HelperMessage";
 import hono from "./hono.png";
 
 import { Settings } from "./Settings";
+
+function getModelName(
+  selectedModel: "groq" | "snowflake" | "cloudflare"
+): string {
+  switch (selectedModel) {
+    case "groq":
+      return "Groq: Llama-3 70B";
+    case "snowflake":
+      return "Snowflake: Mixtral 8x7B";
+    case "cloudflare":
+      return "Cloudflare: Llama-3 8B";
+    default:
+      return "Unknown";
+  }
+}
 
 export default function Chat() {
   const [input, setInput] = useState("");
@@ -18,8 +33,9 @@ export default function Chat() {
     { id: string; role: string; content: string }[]
   >([]);
   const [selectedModel, setSelectedModel] = useState<
-    "openai" | "snowflake" | "worker"
-  >("openai");
+    "groq" | "snowflake" | "cloudflare"
+  >("groq");
+  const [showHelperMessage, setShowHelperMessage] = useState(true);
 
   const [systemMessage, setSystemMessage] = useState(
     "You are a highly capable and intelligent AI assistant (named 'ohno') with a friendly and professional demeanor. Your responses are concise, relevant, and informative, striking a balance between efficiency and engagement. You are designed to assist users with a wide range of tasks, from answering questions to providing recommendations and advice. You are powered by Snowflake's Cortex, allowing you to generate human-like text based on the input you receive. You are always learning and improving, adapting to new information and feedback to provide the best possible assistance to users. You are a valuable resource for anyone seeking information, guidance, or support. How can I help you today?"
@@ -156,7 +172,7 @@ export default function Chat() {
   }
 
   const handleHelperMessageClick = (message: string) => {
-    if (selectedModel === "openai") {
+    if (selectedModel === "groq") {
       appendOpenAIMessage({
         role: "user",
         content: message,
@@ -244,7 +260,11 @@ export default function Chat() {
   return (
     <>
       <div className="px-8 md:px-12 pt-20 md:pt-16 pb-32 md:pb-40 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-6 overflow-y-auto">
-        {selectedModel === "openai"
+        <span className="flex items-center justify-center text-muted-foreground tracking-widest text-xs">
+          {getModelName(selectedModel)}
+        </span>
+
+        {selectedModel === "groq"
           ? openAIMessages.map((m) => (
               <div key={m.id} className="">
                 {m.role === "user" && <UserMessage content={m.content} />}
@@ -280,15 +300,18 @@ export default function Chat() {
           </div>
         )}
         <div className="fixed bottom-24 md:bottom-28 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-[#f1efe8] w-full z-10 border-none space-y-2 pb-2 pt-2">
-          <HelperMessage onMessageClick={handleHelperMessageClick} />
+          {showHelperMessage && (
+            <HelperMessage onMessageClick={handleHelperMessageClick} />
+          )}
         </div>
         <div className="fixed bottom-10 md:bottom-12 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-transparent w-full z-10 border-none">
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              setShowHelperMessage(false);
               console.log("selectedModel", selectedModel);
 
-              if (selectedModel === "openai") {
+              if (selectedModel === "groq") {
                 if (openAIInput.trim() !== "") {
                   appendOpenAIMessage({
                     role: "user",
@@ -300,7 +323,7 @@ export default function Chat() {
                 if (input.trim() !== "") {
                   handleSnowflakeSubmit(input);
                 }
-              } else if (selectedModel === "worker") {
+              } else if (selectedModel === "cloudflare") {
                 if (input.trim() !== "") {
                   handleWorkerSubmit(input);
                 }
@@ -311,9 +334,9 @@ export default function Chat() {
             <div className="relative flex items-center w-full">
               <input
                 name="message"
-                value={selectedModel === "openai" ? openAIInput : input}
+                value={selectedModel === "groq" ? openAIInput : input}
                 onChange={
-                  selectedModel === "openai"
+                  selectedModel === "groq"
                     ? handleOpenAIInputChange
                     : handleInputChange
                 }

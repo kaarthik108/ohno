@@ -1,16 +1,7 @@
 import { MultiRegionRatelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis/cloudflare";
 import { createRoute } from "honox/factory";
-import { z } from "zod";
 
-const schema = z.object({
-  messages: z.array(
-    z.object({
-      role: z.enum(["user", "assistant"]),
-      content: z.string(),
-    })
-  ),
-});
 const cache = new Map();
 
 export const POST = createRoute(async (c) => {

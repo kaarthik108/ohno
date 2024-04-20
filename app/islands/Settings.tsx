@@ -22,8 +22,8 @@ import { Settings2 } from "lucide-react";
 import { useState } from "react";
 
 interface SettingsProps {
-  selectedModel: "openai" | "snowflake" | "worker";
-  setSelectedModel: (model: "openai" | "snowflake" | "worker") => void;
+  selectedModel: "groq" | "snowflake" | "cloudflare";
+  setSelectedModel: (model: "groq" | "snowflake" | "cloudflare") => void;
   systemMessage: string;
   setSystemMessage: (message: string) => void;
   setMessages: (
@@ -59,27 +59,31 @@ export const Settings: React.FC<SettingsProps> = ({
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
+            <label htmlFor="system-message" className="block mb-2">
+              Providers
+            </label>
             <Select
               value={selectedModel}
-              onValueChange={(value: "openai" | "snowflake" | "worker") =>
+              onValueChange={(value: "groq" | "snowflake" | "cloudflare") =>
                 setSelectedModel(value)
               }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a model" />
               </SelectTrigger>
+
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Models</SelectLabel>
-                  <SelectItem value="openai">OpenAI</SelectItem>
+                  <SelectLabel>Providers</SelectLabel>
+                  <SelectItem value="groq">Groq</SelectItem>
                   <SelectItem value="snowflake">Snowflake</SelectItem>
-                  <SelectItem value="worker">Worker</SelectItem>
+                  <SelectItem value="cloudflare">Cloudflare</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
             <div className="mt-4">
               <label htmlFor="system-message" className="block mb-2">
-                System Message:
+                System Message
               </label>
               <textarea
                 id="system-message"

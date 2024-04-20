@@ -1,17 +1,6 @@
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { env } from "hono/adapter";
 import { createRoute } from "honox/factory";
 import OpenAI from "openai";
-import { z } from "zod";
-
-const schema = z.object({
-  messages: z.array(
-    z.object({
-      role: z.enum(["user", "assistant"]),
-      content: z.string(),
-    })
-  ),
-});
 
 export const POST = createRoute(async (c) => {
   const { messages } = await c.req.json();
