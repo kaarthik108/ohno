@@ -82,6 +82,7 @@ export default function Chat() {
       const decoder = new TextDecoder("utf-8");
       let assistantMessageContent = "";
       let assistantMessageId = String(newMessages.length + 1);
+      setIsLoading(false);
 
       setMessages((prevMessages) => [
         ...prevMessages,
