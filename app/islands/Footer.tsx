@@ -1,4 +1,4 @@
-import groq from "/groq.svg";
+import groq from "./groq.svg";
 
 export default function Footer() {
   return (

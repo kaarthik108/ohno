@@ -1,5 +1,5 @@
+import hono from "@/islands/hono.png";
 import { cn } from "@/lib/utils";
-import hono from "../../public/hono.png";
 import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
 
 export function BotMessage({

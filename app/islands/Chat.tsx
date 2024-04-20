@@ -5,8 +5,8 @@ import { executeSnowflakeQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { CornerDownLeft, Loader2 } from "lucide-react";
-import hono from "../../public/hono.png";
 import HelperMessage from "./HelperMessage";
+import hono from "./hono.png";
 
 import { Settings } from "./Settings";
 
@@ -174,13 +174,17 @@ export default function Chat() {
             onSubmit={(e) => {
               e.preventDefault();
               if (selectedModel === "openai") {
-                appendOpenAIMessage({
-                  role: "user",
-                  content: openAIInput,
-                });
-                setOpenAIInput("");
+                if (openAIInput.trim() !== "") {
+                  appendOpenAIMessage({
+                    role: "user",
+                    content: openAIInput,
+                  });
+                  setOpenAIInput("");
+                }
               } else {
-                handleSnowflakeSubmit(input);
+                if (input.trim() !== "") {
+                  handleSnowflakeSubmit(input);
+                }
               }
             }}
             className="bg-stone-900 dark:bg-gray-100 rounded-xl shadow-lg h-12 flex flex-row px-2 items-center w-full max-w-2xl"
@@ -216,7 +220,6 @@ export default function Chat() {
                 />
                 <button
                   type="submit"
-                  aria-label="Send message"
                   disabled={isLoading || isRateLimited}
                   className={cn(
                     `text-white dark:text-black dark:bg-gray-100 rounded-lg hover:bg-white/25 focus:bg-white/25 w-8 h-8 aspect-square flex items-center justify-center ring-0 outline-0`,
@@ -224,6 +227,7 @@ export default function Chat() {
                       "cursor-not-allowed": isRateLimited,
                     }
                   )}
+                  aria-label="Send message"
                 >
                   {isLoading ? (
                     <Loader2 className="animate-spin" />
