@@ -12,7 +12,7 @@ const HasIslands: FC<PropsWithChildren> = ({ children }) => {
 export default reactRenderer(({ children, title }) => {
   return (
     <>
-      {"<!DOCTYPE html>"}
+      {/* <!DOCTYPE html> */}
       <html lang="en">
         <head>
           <meta charSet="UTF-8" />
