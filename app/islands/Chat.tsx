@@ -1,46 +1,59 @@
 import { useEffect, useRef, useState } from "react";
 
 import { BotMessage, UserMessage } from "@/components/message";
-import hono from "@/islands/hono.png";
 import { executeSnowflakeQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
-import { CornerDownLeft, Loader2, MoveUpRight } from "lucide-react";
+import { useChat } from "ai/react";
+import { CornerDownLeft, Loader2 } from "lucide-react";
+import hono from "../../public/hono.png";
+import HelperMessage from "./HelperMessage";
+
+import { Settings } from "./Settings";
 
 export default function Chat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRateLimited, setIsRateLimited] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: "1",
-      role: "system",
-      content:
-        "You are a highly capable and intelligent AI assistant (named 'ohno') with a friendly and professional demeanor. Your responses are concise, relevant, and informative, striking a balance between efficiency and engagement. You are designed to assist users with a wide range of tasks, from answering questions to providing recommendations and advice. You are powered by Snowflake's Cortex, allowing you to generate human-like text based on the input you receive. You are always learning and improving, adapting to new information and feedback to provide the best possible assistance to users. You are a valuable resource for anyone seeking information, guidance, or support. How can I help you today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<
+    { id: string; role: string; content: string }[]
+  >([]);
+  const [selectedModel, setSelectedModel] = useState<"openai" | "snowflake">(
+    "openai"
+  );
+  const [systemMessage, setSystemMessage] = useState(
+    "You are a highly capable and intelligent AI assistant (named 'ohno') with a friendly and professional demeanor. Your responses are concise, relevant, and informative, striking a balance between efficiency and engagement. You are designed to assist users with a wide range of tasks, from answering questions to providing recommendations and advice. You are powered by Snowflake's Cortex, allowing you to generate human-like text based on the input you receive. You are always learning and improving, adapting to new information and feedback to provide the best possible assistance to users. You are a valuable resource for anyone seeking information, guidance, or support. How can I help you today?"
+  );
 
-  const helperMessages = [
-    "What can you do?",
-    "How can you help me?",
-    "What are your capabilities?",
-  ];
+  const {
+    messages: openAIMessages,
+    input: openAIInput,
+    setInput: setOpenAIInput,
+    handleInputChange: handleOpenAIInputChange,
+    append: appendOpenAIMessage,
+  } = useChat();
+
+  useEffect(() => {
+    setMessages([
+      {
+        id: "1",
+        role: "system",
+        content: systemMessage,
+      },
+    ]);
+  }, [systemMessage]);
 
   const handleHelperMessageClick = (message: string) => {
-    const newMessages = [
-      ...messages,
-      {
-        id: String(messages.length + 1),
+    if (selectedModel === "openai") {
+      appendOpenAIMessage({
         role: "user",
         content: message,
-      },
-    ];
-
-    setMessages(newMessages);
-    setInput("");
-    handleSubmit(message);
+      });
+    } else {
+      handleSnowflakeSubmit(message);
+    }
   };
 
-  async function handleSubmit(inputMessage: string) {
+  async function handleSnowflakeSubmit(inputMessage: string) {
     if (!inputMessage) return;
 
     const newMessages = [
@@ -113,19 +126,30 @@ export default function Chat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, openAIMessages]);
+
   return (
     <>
-      <div className="px-8 md:px-12 pt-20 md:pt-16 pb-32 md:pb-40 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-6 overflow-y-auto ">
-        {messages.map((m) => (
-          <div key={m.id} className="">
-            {m.role === "user" && <UserMessage content={m.content} />}
-            {m.role === "assistant" && (
-              <BotMessage content={m.content} className="antialiased" />
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        ))}
+      <div className="px-8 md:px-12 pt-20 md:pt-16 pb-32 md:pb-40 max-w-3xl mx-auto flex flex-col space-y-3 md:space-y-6 overflow-y-auto">
+        {selectedModel === "openai"
+          ? openAIMessages.map((m) => (
+              <div key={m.id} className="">
+                {m.role === "user" && <UserMessage content={m.content} />}
+                {m.role === "assistant" && (
+                  <BotMessage content={m.content} className="antialiased" />
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            ))
+          : messages.map((m) => (
+              <div key={m.id} className="">
+                {m.role === "user" && <UserMessage content={m.content} />}
+                {m.role === "assistant" && (
+                  <BotMessage content={m.content} className="antialiased" />
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            ))}
         {isLoading && (
           <div className={cn("group relative flex items-start md:-ml-12")}>
             <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md shadow-sm bg-tranparent">
@@ -143,36 +167,33 @@ export default function Chat() {
           </div>
         )}
         <div className="fixed bottom-24 md:bottom-28 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-[#f1efe8] w-full z-10 border-none space-y-2 pb-2 pt-2">
-          <div className="flex flex-col sm:flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 w-full max-w-2xl mb-2 md:mb-0">
-            {helperMessages.map((message, index) => (
-              <div
-                key={index}
-                className="flex-1 bg-transparent rounded-xl shadow-lg h-32 md:h-10 flex items-center text-nowrap justify-between px-3 py-4 md:py-0 cursor-pointer border border-gray-300 hover:border-black transition-colors duration-300"
-                onClick={() => {
-                  if (!isRateLimited) {
-                    handleHelperMessageClick(message);
-                  }
-                }}
-              >
-                <span className="text-black font-mono text-xs">{message}</span>
-                <MoveUpRight size={12} className="ml-2 text-black" />
-              </div>
-            ))}
-          </div>
+          <HelperMessage onMessageClick={handleHelperMessageClick} />
         </div>
         <div className="fixed bottom-10 md:bottom-12 left-0 right-0 flex flex-col justify-center items-center mx-auto bg-transparent w-full z-10 border-none">
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleSubmit(input);
+              if (selectedModel === "openai") {
+                appendOpenAIMessage({
+                  role: "user",
+                  content: openAIInput,
+                });
+                setOpenAIInput("");
+              } else {
+                handleSnowflakeSubmit(input);
+              }
             }}
             className="bg-stone-900 dark:bg-gray-100 rounded-xl shadow-lg h-12 flex flex-row px-2 items-center w-full max-w-2xl"
           >
             <div className="relative flex items-center w-full">
               <input
                 name="message"
-                value={input}
-                onChange={handleInputChange}
+                value={selectedModel === "openai" ? openAIInput : input}
+                onChange={
+                  selectedModel === "openai"
+                    ? handleOpenAIInputChange
+                    : handleInputChange
+                }
                 maxLength={150}
                 autoFocus
                 autoComplete="off"
@@ -185,22 +206,32 @@ export default function Chat() {
                   }
                 )}
               />
-              <button
-                type="submit"
-                disabled={isLoading || isRateLimited}
-                className={cn(
-                  `text-white dark:text-black dark:bg-gray-100 rounded-lg hover:bg-white/25 focus:bg-white/25 w-8 h-8 aspect-square flex items-center justify-center ring-0 outline-0`,
-                  {
-                    "cursor-not-allowed": isRateLimited,
-                  }
-                )}
-              >
-                {isLoading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <CornerDownLeft size={16} className="-ml-px" />
-                )}{" "}
-              </button>
+              <div className="flex items-center">
+                <Settings
+                  selectedModel={selectedModel}
+                  setSelectedModel={setSelectedModel}
+                  systemMessage={systemMessage}
+                  setSystemMessage={setSystemMessage}
+                  setMessages={setMessages}
+                />
+                <button
+                  type="submit"
+                  aria-label="Send message"
+                  disabled={isLoading || isRateLimited}
+                  className={cn(
+                    `text-white dark:text-black dark:bg-gray-100 rounded-lg hover:bg-white/25 focus:bg-white/25 w-8 h-8 aspect-square flex items-center justify-center ring-0 outline-0`,
+                    {
+                      "cursor-not-allowed": isRateLimited,
+                    }
+                  )}
+                >
+                  {isLoading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <CornerDownLeft size={16} className="-ml-px" />
+                  )}{" "}
+                </button>
+              </div>
             </div>
           </form>
         </div>

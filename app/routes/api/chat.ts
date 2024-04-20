@@ -17,13 +17,16 @@ export const POST = createRoute(async (c) => {
   const { messages } = await c.req.json();
 
   const openai = new OpenAI({
-    apiKey: env<{ OPENAI_API_KEY: string }>(c).OPENAI_API_KEY,
+    apiKey: c.env?.GORQ_API_KEY as string,
+    baseURL: "https://api.groq.com/openai/v1",
   });
 
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "llama3-8b-8192",
     stream: true,
     messages,
+    temperature: 0.7,
+    max_tokens: 150,
   });
 
   const stream = OpenAIStream(response);

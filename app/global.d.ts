@@ -9,6 +9,7 @@ declare module "@hono/react-renderer" {
       SNOWFLAKE_API_URL: string;
       UPSTASH_REDIS_URL: string;
       UPSTASH_REDIS_TOKEN: string;
+      GORQ_API_KEY: string;
       TOKEN: string;
     };
     Bindings: {
@@ -17,6 +18,7 @@ declare module "@hono/react-renderer" {
       SNOWFLAKE_API_URL: string;
       UPSTASH_REDIS_URL: string;
       UPSTASH_REDIS_TOKEN: string;
+      GORQ_API_KEY: string;
       TOKEN: string;
     };
   }

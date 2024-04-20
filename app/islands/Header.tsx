@@ -12,14 +12,17 @@ export function Header() {
       </div>
       <div className="p-2">
         <div className="flex items-center gap-4">
-          <a href="https://github.com/kaarthik108/ohno" target="_blank">
+          <a
+            href="https://github.com/kaarthik108/ohno"
+            target="_blank"
+            aria-label="Visit the GitHub repository"
+          >
             <IconGitHub className="hover:text-stone-500" />
           </a>
-
           <a
             href="https://twitter.com/kaarthikcodes"
             target="_blank"
-            className=""
+            aria-label="Follow me on Twitter"
           >
             <IconX className="hover:text-stone-500 text-black" />
           </a>
@@ -67,7 +70,7 @@ export function IconSnowflake({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="#29b5e8"
+      // fill="#29b5e8"
       width="24"
       height="24"
       className={cn("size-1", className)}

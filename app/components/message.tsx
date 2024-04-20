@@ -1,5 +1,6 @@
-import hono from "@/islands/hono.png";
 import { cn } from "@/lib/utils";
+import hono from "../../public/hono.png";
+import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
 
 export function BotMessage({
   content,
@@ -8,6 +9,7 @@ export function BotMessage({
   content: string;
   className?: string;
 }) {
+  // const words = content.split(" ").map((word) => ({ text: `${word} ` }));
   return (
     <div className={cn("group relative flex items-start md:-ml-12", className)}>
       <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md bg-tranparent">
