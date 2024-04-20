@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
+    "fetch-event-stream": "^0.1.5",
     "framer-motion": "^11.1.5",
     "hono": "^4.2.4",
     "honox": "^0.1.15",

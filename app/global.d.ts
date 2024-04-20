@@ -14,6 +14,7 @@ declare module "@hono/react-renderer" {
     };
     Bindings: {
       kv: KVNamespace;
+      ai: any;
       OPENAI_API_KEY: string;
       SNOWFLAKE_API_URL: string;
       UPSTASH_REDIS_URL: string;

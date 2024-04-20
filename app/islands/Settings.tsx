@@ -22,8 +22,8 @@ import { Settings2 } from "lucide-react";
 import { useState } from "react";
 
 interface SettingsProps {
-  selectedModel: "openai" | "snowflake";
-  setSelectedModel: (model: "openai" | "snowflake") => void;
+  selectedModel: "openai" | "snowflake" | "worker";
+  setSelectedModel: (model: "openai" | "snowflake" | "worker") => void;
   systemMessage: string;
   setSystemMessage: (message: string) => void;
   setMessages: (
@@ -61,7 +61,7 @@ export const Settings: React.FC<SettingsProps> = ({
           <div className="p-4 pb-0">
             <Select
               value={selectedModel}
-              onValueChange={(value: "openai" | "snowflake") =>
+              onValueChange={(value: "openai" | "snowflake" | "worker") =>
                 setSelectedModel(value)
               }
             >
@@ -73,6 +73,7 @@ export const Settings: React.FC<SettingsProps> = ({
                   <SelectLabel>Models</SelectLabel>
                   <SelectItem value="openai">OpenAI</SelectItem>
                   <SelectItem value="snowflake">Snowflake</SelectItem>
+                  <SelectItem value="worker">Worker</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

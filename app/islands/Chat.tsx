@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { BotMessage, UserMessage } from "@/components/message";
-import { executeSnowflakeQuery } from "@/lib/snowflake";
+import { executeSnowflakeQuery, fetchaiQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { CornerDownLeft, Loader2 } from "lucide-react";
@@ -17,9 +17,10 @@ export default function Chat() {
   const [messages, setMessages] = useState<
     { id: string; role: string; content: string }[]
   >([]);
-  const [selectedModel, setSelectedModel] = useState<"openai" | "snowflake">(
-    "openai"
-  );
+  const [selectedModel, setSelectedModel] = useState<
+    "openai" | "snowflake" | "worker"
+  >("openai");
+
   const [systemMessage, setSystemMessage] = useState(
     "You are a highly capable and intelligent AI assistant (named 'ohno') with a friendly and professional demeanor. Your responses are concise, relevant, and informative, striking a balance between efficiency and engagement. You are designed to assist users with a wide range of tasks, from answering questions to providing recommendations and advice. You are powered by Snowflake's Cortex, allowing you to generate human-like text based on the input you receive. You are always learning and improving, adapting to new information and feedback to provide the best possible assistance to users. You are a valuable resource for anyone seeking information, guidance, or support. How can I help you today?"
   );
@@ -41,6 +42,117 @@ export default function Chat() {
       },
     ]);
   }, [systemMessage]);
+
+  async function handleWorkerSubmit(inputMessage: string) {
+    if (!inputMessage) return;
+
+    // Add user message to chat
+    const newMessages = [
+      ...messages,
+      {
+        id: String(messages.length + 1),
+        role: "user",
+        content: inputMessage,
+      },
+    ];
+
+    setMessages(newMessages);
+    setInput("");
+    setIsLoading(true);
+
+    // Initialize the stream connection and update the chat as messages arrive
+    try {
+      const response = await fetch("/api/ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let assistantMessageContent = "";
+      let assistantMessageId = String(newMessages.length + 1);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: assistantMessageId,
+          role: "assistant",
+          content: "",
+        },
+      ]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice("data: ".length);
+            if (data.trim() === "[DONE]") {
+              break;
+            }
+
+            try {
+              const parsedData = JSON.parse(data);
+              if (
+                parsedData.choices &&
+                parsedData.choices[0].delta &&
+                parsedData.choices[0].delta.content
+              ) {
+                assistantMessageContent += parsedData.choices[0].delta.content;
+
+                // Update the assistant message in the chat
+                setMessages((prevMessages) =>
+                  prevMessages.map((message) =>
+                    message.id === assistantMessageId
+                      ? { ...message, content: assistantMessageContent }
+                      : message
+                  )
+                );
+              }
+            } catch (error) {
+              console.error("Error parsing JSON:", error);
+            }
+          }
+        }
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error executing query:", error);
+      setIsLoading(false);
+      if (error instanceof Error) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: String(prevMessages.length + 1),
+            role: "assistant",
+            content: error.message.includes("You are rate limited")
+              ? "You are rate limited. Please try again later."
+              : "An error occurred. Please try again.",
+          },
+        ]);
+        if (error.message.includes("You are rate limited")) {
+          setIsRateLimited(true);
+        }
+      }
+    }
+  }
 
   const handleHelperMessageClick = (message: string) => {
     if (selectedModel === "openai") {
@@ -173,6 +285,8 @@ export default function Chat() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              console.log("selectedModel", selectedModel);
+
               if (selectedModel === "openai") {
                 if (openAIInput.trim() !== "") {
                   appendOpenAIMessage({
@@ -181,9 +295,13 @@ export default function Chat() {
                   });
                   setOpenAIInput("");
                 }
-              } else {
+              } else if (selectedModel === "snowflake") {
                 if (input.trim() !== "") {
                   handleSnowflakeSubmit(input);
+                }
+              } else if (selectedModel === "worker") {
+                if (input.trim() !== "") {
+                  handleWorkerSubmit(input);
                 }
               }
             }}
