@@ -20,7 +20,12 @@ export default defineConfig(({ mode }) => {
       plugins: [client({ jsxImportSource: "react" })],
       build: {
         rollupOptions: {
-          input: ["./app/client.ts", "/app/tailwind.css", "/app/favicon.ico"],
+          input: [
+            "./app/client.ts",
+            "/app/tailwind.css",
+            "/app/favicon.ico",
+            "/app/og-image.png",
+          ],
           output: {
             entryFileNames: "static/client.js",
             chunkFileNames: "static/assets/[name]-[hash].js",

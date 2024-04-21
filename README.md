@@ -1,7 +1,7 @@
 # ohno
 
 <p align="center">
-  <img src="app/assets/og-image.png" alt="ohno - The Fastest AI Chatbot" width="100%">
+  <img src="app/og-image.png" alt="ohno - The Fastest AI Chatbot" width="100%">
 </p>
 
 <strong>ohno</strong> is a lightning-fast AI chatbot built with the Hono.js framework, React, and Tailwind CSS.
