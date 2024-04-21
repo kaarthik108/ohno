@@ -1,18 +1,4 @@
-export interface SnowflakeResponse {
-  choices: Array<{
-    messages: string;
-  }>;
-  created: number;
-  model: string;
-  usage: {
-    completion_tokens: number;
-    prompt_tokens: number;
-    total_tokens: number;
-  };
-}
-export interface RateLimitResponse {
-  query: string;
-}
+import { RateLimitResponse, SnowflakeResponse } from "@/types";
 
 export async function executeSnowflakeQuery(
   sqlText: string
