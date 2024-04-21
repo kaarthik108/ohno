@@ -7,6 +7,7 @@ mode = "smart"
 
 [vars]
 OPENAI_API_KEY = ""
+GORQ_API_KEY = ""
 ACCOUNT = ""
 USER_NAME = ""
 PASSWORD = ""
