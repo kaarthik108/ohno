@@ -47,28 +47,3 @@ export async function executeSnowflakeQuery(
 
   return data as SnowflakeResponse[];
 }
-export async function fetchaiQuery(
-  messages: { role: string; content: string }[]
-): Promise<SnowflakeResponse[]> {
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://ohno-1sq.pages.dev"
-      : "http://localhost:5173";
-
-  const res = await fetch(`${baseUrl}/api/ai`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ messages }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to execute query");
-  }
-
-  const data: unknown = await res.json();
-  console.log(data);
-
-  return data as any;
-}

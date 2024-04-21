@@ -1,12 +1,30 @@
-// import { OpenAIStream, StreamingTextResponse } from "ai";
+/* Deploy this on a nodejs runtime or simply run in local and connect to cloudflare tunnels */
+
 // import { env } from "hono/adapter";
 // import { createRoute } from "honox/factory";
-// import OpenAI from "openai";
-// import * as snowflake from "snowflake-sdk";
-// import { z } from "zod";
+// import snowflake from "snowflake-sdk";
 
 // export const POST = createRoute(async (c) => {
+//   const token = c.req.header("Authorization");
+
+//   if (!token || !token.startsWith("Bearer ")) {
+//     return new Response("Unauthorized", {
+//       status: 401,
+//       headers: { "Content-Type": "application/json" },
+//     });
+//   }
+
+//   const bearerToken = token.substring(7); // Remove "Bearer " prefix
+
+//   if (bearerToken !== env<{ TOKEN: string }>(c).TOKEN) {
+//     return new Response("Unauthorized", {
+//       status: 401,
+//       headers: { "Content-Type": "application/json" },
+//     });
+//   }
+
 //   const requestBody = await c.req.json();
+//   console.log(requestBody);
 
 //   const config = env<{
 //     ACCOUNT: string;

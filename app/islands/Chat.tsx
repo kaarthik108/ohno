@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
+import hono from "@/assets/hono.png";
 import { BotMessage, UserMessage } from "@/components/message";
 import { executeSnowflakeQuery } from "@/lib/snowflake";
 import { cn } from "@/lib/utils";
 import { useChat } from "ai/react";
 import { CornerDownLeft, Loader2 } from "lucide-react";
 import HelperMessage from "./HelperMessage";
-import hono from "./hono.png";
 
 import { Settings } from "./Settings";
 

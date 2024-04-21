@@ -1,10 +1,4 @@
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import { events } from "fetch-event-stream";
-import { env } from "hono/adapter";
-import { streamText } from "hono/streaming";
 import { createRoute } from "honox/factory";
-import OpenAI from "openai";
-import { z } from "zod";
 
 export const POST = createRoute(async (c) => {
   const { messages } = await c.req.json();

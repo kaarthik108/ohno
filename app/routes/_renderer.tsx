@@ -47,7 +47,7 @@ export default reactRenderer(({ children, title }) => {
           <meta property="og:url" content="https://ohno-1sq.pages.dev" />
           <meta
             property="og:image"
-            content="https://ohno-1sq.pages.dev/static/assets/og-image.jpg"
+            content="https://ohno-1sq.pages.dev/static/assets/og-image.png"
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta
@@ -62,7 +62,7 @@ export default reactRenderer(({ children, title }) => {
           />
           <meta
             name="twitter:image"
-            content="https://ohno-1sq.pages.dev/static/assets/twitter-image.jpg"
+            content="https://ohno-1sq.pages.dev/static/assets/og-image.png"
           />
 
           {import.meta.env.PROD ? (
