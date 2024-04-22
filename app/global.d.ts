@@ -11,6 +11,7 @@ declare module "@hono/react-renderer" {
       UPSTASH_REDIS_TOKEN: string;
       GORQ_API_KEY: string;
       TOKEN: string;
+      X_API_KEY: string;
     };
     Bindings: {
       kv: KVNamespace;

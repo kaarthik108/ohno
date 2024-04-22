@@ -12,7 +12,7 @@ export const POST = createRoute(async (c) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "llama3-8b-8192",
+      model: "llama3-70b-8192",
       stream: true,
       messages,
       temperature: 0.7,

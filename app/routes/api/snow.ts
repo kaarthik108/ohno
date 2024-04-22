@@ -12,7 +12,7 @@ export const POST = createRoute(async (c) => {
 
   const ohnoRateLimit = new MultiRegionRatelimit({
     redis: [redis],
-    limiter: MultiRegionRatelimit.slidingWindow(10, "60 s"),
+    limiter: MultiRegionRatelimit.slidingWindow(5, "60 s"),
     analytics: true,
     prefix: "ratelimit:ohno",
     ephemeralCache: cache,
@@ -25,20 +25,20 @@ export const POST = createRoute(async (c) => {
   if (data.success) {
     const { query } = await c.req.json();
 
-    const baseUrl = c.env?.SNOWFLAKE_API_URL; // cloudflare tunnel 😅
+    // const baseUrl = c.env?.SNOWFLAKE_API_URL; // cloudflare tunnel 😅
 
-    const res = await fetch(`${baseUrl}/api/snow`, {
+    const baseUrl = `https://snowbrain-agui.vercel.app`;
+
+    const res = await fetch(`${baseUrl}/api/snowai`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + c.env?.TOKEN,
+        "x-api-key": c.env?.X_API_KEY as string,
       },
       body: JSON.stringify({ query: query }),
     });
 
     if (!res.ok) {
-      console.log(res);
-
       throw new Error("Failed to execute query");
     }
 
